@@ -81,7 +81,7 @@ namespace C_sharp_Lab5
 
         private void processToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string word = PromptForInput("Введите слово", "Ключевое слово");
+            string word = PromptForInput();
             if (word != null)
             {
                 string processedText = LinesBeforeWord(textBox1.Text, word);
@@ -91,33 +91,56 @@ namespace C_sharp_Lab5
 
         private string LinesBeforeWord(string input, string word)
         {
-            StringBuilder result = new StringBuilder();
-            string[] lines = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            //StringBuilder result = new StringBuilder();
+            String result = "";
+            string[] lines = input.Split('\n');
 
             for (int i = 1; i < lines.Length; i++)
             {
-  
-                if (lines[i].StartsWith(word, StringComparison.OrdinalIgnoreCase))
+                
+                // Пропускаем начальные пробелы
+                int startIndex = 0;
+                if (word != " ")
+                    while (startIndex < lines[i].Length && lines[i][startIndex] == ' ')
+                    {
+                        startIndex++;
+                    }
+
+                // Проверяем, достаточно ли длины строки для сравнения
+                if (startIndex + word.Length <= lines[i].Length && CompareFirstCharacters(lines[i], word, startIndex))
                 {
-                    result.AppendLine(lines[i-1]); 
+                    result += '\n' + (lines[i - 1]);
                 }
             }
 
             return result.ToString();
         }
 
+        private bool CompareFirstCharacters(string line, string word, int startIndex)
+        {
+            for (int j = 0; j < word.Length; j++)
+            {
+                // Если символы не совпадают, возвращаем false
+                if (startIndex + j >= line.Length || line[startIndex + j] != word[j])
+                {
+                    return false;
+                }
+            }
+            return true; // Все символы совпадают
+        }
 
-        private string PromptForInput(string message, string title)
+
+        private string PromptForInput()
         {
             Form prompt = new Form()
             {
                 Width = 300,
                 Height = 150,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = title,
+                Text = "Ввод ключевого слова",
                 StartPosition = FormStartPosition.CenterScreen
             };
-            Label textLabel = new Label() { Left = 20, Top = 20, Text = message };
+            Label textLabel = new Label() { Left = 20, Top = 20, Text = "Введите слово" };
             TextBox textBox = new TextBox() { Left = 20, Top = 50, Width = 240 };
             Button confirmation = new Button() { Text = "Ok", Left = 200, Width = 60, Top = 70 };
             confirmation.Click += (sender, e) => { prompt.Close(); };
@@ -134,6 +157,7 @@ namespace C_sharp_Lab5
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             textBox1.Clear();
+            textBox2.Clear();
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
