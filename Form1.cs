@@ -44,7 +44,7 @@ namespace C_sharp_Lab5
                 {
                     currentFilePath = openFileDialog.FileName;
                     textBox1.Text = File.ReadAllText(currentFilePath);
-
+                    textBox2.Text = string.Empty.ToString();
                 }
             }
 
@@ -58,7 +58,9 @@ namespace C_sharp_Lab5
             }
             else
             {
-                File.WriteAllText(currentFilePath, textBox1.Text);
+                if (string.IsNullOrWhiteSpace(textBox2.Text))
+                    File.WriteAllText(currentFilePath, textBox1.Text);
+                else File.WriteAllText(currentFilePath, textBox2.Text);
             }
         }
 
@@ -69,22 +71,25 @@ namespace C_sharp_Lab5
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     currentFilePath = saveFileDialog.FileName;
-                    File.WriteAllText(currentFilePath, textBox1.Text);
+                    if (string.IsNullOrWhiteSpace(textBox2.Text))
+                        File.WriteAllText(currentFilePath, textBox1.Text);
+                    else File.WriteAllText(currentFilePath, textBox2.Text);
+
                 }
             }
         }
 
         private void processToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string word = "СЛОВО";
+            string word = PromptForInput("Введите слово", "Ключевое слово");
             if (word != null)
             {
-                string processedText = MoveLinesBeforeWord(textBox1.Text, word);
-                textBox1.Text = processedText;
+                string processedText = LinesBeforeWord(textBox1.Text, word);
+                textBox2.Text = processedText;
             }
         }
 
-        private string MoveLinesBeforeWord(string input, string word)
+        private string LinesBeforeWord(string input, string word)
         {
             StringBuilder result = new StringBuilder();
             string[] lines = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
@@ -102,26 +107,26 @@ namespace C_sharp_Lab5
         }
 
 
-        //private string PromptForInput(string message, string title)
-        //{
-        //    Form prompt = new Form()
-        //    {
-        //        Width = 300,
-        //        Height = 150,
-        //        FormBorderStyle = FormBorderStyle.FixedDialog,
-        //        Text = title,
-        //        StartPosition = FormStartPosition.CenterScreen
-        //    };
-        //    Label textLabel = new Label() { Left = 20, Top = 20, Text = message };
-        //    TextBox textBox = new TextBox() { Left = 20, Top = 50, Width = 240 };
-        //    Button confirmation = new Button() { Text = "Ok", Left = 200, Width = 60, Top = 70 };
-        //    confirmation.Click += (sender, e) => { prompt.Close(); };
-        //    prompt.Controls.Add(textLabel);
-        //    prompt.Controls.Add(textBox);
-        //    prompt.Controls.Add(confirmation);
-        //    prompt.ShowDialog();
-        //    return textBox.Text;
-        //}
+        private string PromptForInput(string message, string title)
+        {
+            Form prompt = new Form()
+            {
+                Width = 300,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = title,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            Label textLabel = new Label() { Left = 20, Top = 20, Text = message };
+            TextBox textBox = new TextBox() { Left = 20, Top = 50, Width = 240 };
+            Button confirmation = new Button() { Text = "Ok", Left = 200, Width = 60, Top = 70 };
+            confirmation.Click += (sender, e) => { prompt.Close(); };
+            prompt.Controls.Add(textLabel);
+            prompt.Controls.Add(textBox);
+            prompt.Controls.Add(confirmation);
+            prompt.ShowDialog();
+            return textBox.Text;
+        }
 
 
 
