@@ -85,29 +85,39 @@ namespace C_sharp_Lab5
             if (word != null)
             {
                 string processedText = LinesBeforeWord(textBox1.Text, word);
+                if (processedText == "")
+                {
+                    Form window = new Form()
+                    {
+                        Width = 300,
+                        Height = 150,
+                        FormBorderStyle = FormBorderStyle.FixedDialog,
+                        Text = "Ошибка",
+                        StartPosition = FormStartPosition.CenterScreen
+                    };
+                    Label textLabel = new Label() { Text = "Не найдено" };
+                    window.Controls.Add(textLabel);
+                    window.ShowDialog();
+                }
+                else
                 textBox2.Text = processedText;
             }
         }
 
         private string LinesBeforeWord(string input, string word)
         {
-            //StringBuilder result = new StringBuilder();
             String result = "";
             string[] lines = input.Split('\n');
 
             for (int i = 1; i < lines.Length; i++)
             {
-                
-                // Пропускаем начальные пробелы
                 int startIndex = 0;
                 if (word != " ")
                     while (startIndex < lines[i].Length && lines[i][startIndex] == ' ')
                     {
                         startIndex++;
                     }
-
-                // Проверяем, достаточно ли длины строки для сравнения
-                if (startIndex + word.Length <= lines[i].Length && CompareFirstCharacters(lines[i], word, startIndex))
+                if (CompareFirstCharacters(lines[i], word, startIndex))
                 {
                     result += '\n' + (lines[i - 1]);
                 }
@@ -120,13 +130,12 @@ namespace C_sharp_Lab5
         {
             for (int j = 0; j < word.Length; j++)
             {
-                // Если символы не совпадают, возвращаем false
                 if (startIndex + j >= line.Length || line[startIndex + j] != word[j])
                 {
                     return false;
                 }
             }
-            return true; // Все символы совпадают
+            return true;
         }
 
 
